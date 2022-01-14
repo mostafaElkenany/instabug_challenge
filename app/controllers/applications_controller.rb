@@ -3,14 +3,14 @@ class ApplicationsController < ApplicationController
 
   # GET /applications
   def index
-    @applications = Application.all
+    @applications = Application.select('token', 'name').as_json(:except => :id)
 
-    render json: @applications
+    render json: {status: 200, message: 'fetched applications successfully', data: @applications}
   end
 
   # GET /applications/1
   def show
-    render json: @application
+    render json: {status: 200, message: 'fetched application successfully', data: @applications}
   end
 
   # POST /applications
@@ -18,16 +18,17 @@ class ApplicationsController < ApplicationController
     @application = Application.new(application_params)
 
     if @application.save
-      render json: @application, status: :created, location: @application
+      render json: {status: 200, message: 'application created successfully', data: {name: @application.name, token: @application.token }}
     else
       render json: @application.errors, status: :unprocessable_entity
     end
-  end
 
+  end
+  
   # PATCH/PUT /applications/1
   def update
     if @application.update(application_params)
-      render json: @application
+      render json: {status: 200, message: 'application updated successfully', data: {name: @application.name, token: @application.token }}
     else
       render json: @application.errors, status: :unprocessable_entity
     end
@@ -41,11 +42,11 @@ class ApplicationsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_application
-      @application = Application.find(params[:id])
+      @application = Application.find_by(token: params[:token])
     end
 
     # Only allow a list of trusted parameters through.
     def application_params
-      params.require(:application).permit(:token, :name)
+      params.require(:application).permit(:name)
     end
 end

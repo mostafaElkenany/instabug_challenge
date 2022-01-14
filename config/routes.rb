@@ -1,7 +1,5 @@
 Rails.application.routes.draw do
-  resources :applications
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Defines the root path route ("/")
-  # root "articles#index"
+  resources :applications, :except => ['show', 'update', 'destroy']
+  get    'applications/:token' => 'applications#show'
+  patch    'applications/:token' => 'applications#update'
 end
