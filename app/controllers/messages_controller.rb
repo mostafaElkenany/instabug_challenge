@@ -14,7 +14,11 @@ class MessagesController < ApplicationController
   def create
     chat = Chat.joins(:application).find_by(application: { token: params[:token] }, number: params[:chat_number].to_i)
     number = chat.messages.maximum('number')
-    number += 1
+    if number.nil?
+      number = 1
+    else
+      number += 1
+    end
     CreateMessageJob.perform_later(chat, message_params, number)
     render json: { status: 200, message: 'created message successfully', data: { number: number } }
   rescue StandardError => e
