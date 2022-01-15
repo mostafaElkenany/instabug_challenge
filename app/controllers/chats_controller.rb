@@ -9,15 +9,13 @@ class ChatsController < ApplicationController
   def show; end
 
   def create
-    @application = Application.find_by(token: params[:token])
-
-    @chat = @application.chats.new
-
-    if @chat.save
-      render json: { status: 200, message: 'created chat successfully', data: {number: @chat.number} }
-    else
-      render json: @chat.errors, status: :unprocessable_entity
-    end
+    application = Application.find_by(token: params[:token])
+    number = application.chats.maximum('number')
+    number += 1
+    CreateChatJob.perform_later(application, number)
+    render json: { status: 200, message: 'created chat successfully', data: { number: number } }
+  rescue StandardError => e
+    render json: { status: 422, message: 'failed to create chat' }
   end
 
   def update

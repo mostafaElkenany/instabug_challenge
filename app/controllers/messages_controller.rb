@@ -13,15 +13,12 @@ class MessagesController < ApplicationController
 
   def create
     chat = Chat.joins(:application).find_by(application: { token: params[:token] }, number: params[:chat_number].to_i)
-
-    @message = chat.messages.new(message_params)
-
-    if @message.save
-      render json: { status: 200, message: 'created message successfully',
-                     data: { content: @message.content, number: @message.number } }
-    else
-      render json: @message.errors, status: :unprocessable_entity
-    end
+    number = chat.messages.maximum('number')
+    number += 1
+    CreateMessageJob.perform_later(chat, message_params, number)
+    render json: { status: 200, message: 'created message successfully', data: { number: number } }
+  rescue StandardError => e
+    render json: { status: 422, message: 'failed to create message', error: e }
   end
 
   def update
