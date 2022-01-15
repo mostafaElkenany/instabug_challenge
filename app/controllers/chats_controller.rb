@@ -1,27 +1,23 @@
 class ChatsController < ApplicationController
   before_action only: %i[show update destroy]
 
-  # GET /chats
   def index
     @application = Application.find_by(token: params[:token])
-    @chat = Chat.select('number').where(application_id: @application.id).as_json(except: :id)
-    render json: @chat
+
+    response = @application.chats.map do |chat|
+      { number: chat[:number] }
+    end
+    render json: response
   end
 
-  # GET /chats/1
   def show
-    @application = Application.find_by(token: params[:token])
-    @chat = Chat.select('number').where(application_id: @application.id).as_json(except: :id)
-    render json: @chat
   end
 
-  # POST /chats
   def create
     @application = Application.find_by(token: params[:token])
 
     @chat = Chat.new
     @chat.application_id = @application.id
-    # render json: {status: 200, message: 'fetched application successfully', data: @application}
     if @chat.save
       render json: { status: 200, message: 'created chat successfully', data: @chat }
     else
@@ -29,7 +25,6 @@ class ChatsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /chats/1
   def update
     if @chat.update(chat_params)
       render json: @chat
@@ -38,9 +33,7 @@ class ChatsController < ApplicationController
     end
   end
 
-  # DELETE /chats/1
   def destroy
-    @chat.destroy
   end
 
   private

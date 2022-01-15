@@ -1,19 +1,16 @@
 class ApplicationsController < ApplicationController
   before_action :set_application, only: %i[show update destroy]
 
-  # GET /applications
   def index
     @applications = Application.select('token', 'name', 'chats_count').as_json(except: :id)
 
     render json: { status: 200, message: 'fetched applications successfully', data: @applications }
   end
 
-  # GET /applications/1
   def show
     render json: { status: 200, message: 'fetched application successfully', data: @application }
   end
 
-  # POST /applications
   def create
     @application = Application.new(application_params)
 
@@ -25,7 +22,6 @@ class ApplicationsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /applications/1
   def update
     if @application.update(application_params)
       render json: { status: 200, message: 'application updated successfully',
@@ -35,7 +31,6 @@ class ApplicationsController < ApplicationController
     end
   end
 
-  # DELETE /applications/1
   def destroy
     @application.destroy
   end

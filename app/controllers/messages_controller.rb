@@ -1,19 +1,22 @@
 class MessagesController < ApplicationController
   before_action :set_message, only: %i[show update destroy]
 
-  # GET /messages
   def index
-    @messages = Message.all
+    @application = Application.find_by(token: params[:token])
+    chat = @application.chats.detect do |chat|
+      chat[:application_id] == @application.id and chat[:number] == params[:chat_number].to_i
+    end
 
-    render json: @messages
+    response = chat.messages.map do |message|
+      { number: message[:number], content: message[:content] }
+    end
+    render json: response
   end
 
-  # GET /messages/1
   def show
     render json: @message
   end
 
-  # POST /messages
   def create
     @application = Application.find_by(token: params[:token])
     @chat = Chat.find_by(application_id: @application.id, number: params[:chat_number])
@@ -28,7 +31,6 @@ class MessagesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /messages/1
   def update
     if @message.update(message_params)
       render json: @message
@@ -37,7 +39,6 @@ class MessagesController < ApplicationController
     end
   end
 
-  # DELETE /messages/1
   def destroy
     @message.destroy
   end
