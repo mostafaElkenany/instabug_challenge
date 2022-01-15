@@ -3,7 +3,7 @@ class Chat < ApplicationRecord
   has_many :messages
 
   before_validation(on: :create) do
-    self.number = application.chats.collect { |chat| chat.number }.max
+    self.number = application.chats.collect { |chat| chat.number.to_i }.max
     if number.nil?
       self.number = 1
     else

@@ -2,14 +2,8 @@ class MessagesController < ApplicationController
   before_action :set_message, only: %i[show update destroy]
 
   def index
-    @application = Application.find_by(token: params[:token])
-    chat = @application.chats.detect do |chat|
-      chat[:application_id] == @application.id and chat[:number] == params[:chat_number].to_i
-    end
-
-    response = chat.messages.map do |message|
-      { number: message[:number], content: message[:content] }
-    end
+    response = Message.joins(chat: :application).select(:number, :content).where(chat: { number: params[:chat_number].to_i },
+                                                                                 application: { token: params[:token] }).as_json(except: :id)
     render json: response
   end
 
@@ -18,14 +12,13 @@ class MessagesController < ApplicationController
   end
 
   def create
-    @application = Application.find_by(token: params[:token])
-    @chat = Chat.find_by(application_id: @application.id, number: params[:chat_number])
+    chat = Chat.joins(:application).find_by(application: { token: params[:token] }, number: params[:chat_number].to_i)
 
-    @message = Message.new(message_params)
-    @message.chat_id = @chat.id
+    @message = chat.messages.new(message_params)
 
     if @message.save
-      render json: { status: 200, message: 'created message successfully', data: @message }
+      render json: { status: 200, message: 'created message successfully',
+                     data: { content: @message.content, number: @message.number } }
     else
       render json: @message.errors, status: :unprocessable_entity
     end
@@ -33,7 +26,7 @@ class MessagesController < ApplicationController
 
   def update
     if @message.update(message_params)
-      render json: @message
+      render json: { content: @message.content, number: @message.number }
     else
       render json: @message.errors, status: :unprocessable_entity
     end
@@ -47,7 +40,8 @@ class MessagesController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_message
-    @message = Message.find(params[:id])
+    @message = Message.joins(chat: :application).find_by(chat: { number: params[:chat_number].to_i },
+                                                         application: { token: params[:token] }, number: params[:message_number])
   end
 
   # Only allow a list of trusted parameters through.

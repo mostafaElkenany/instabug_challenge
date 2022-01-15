@@ -1,25 +1,20 @@
 class ChatsController < ApplicationController
-  before_action only: %i[show update destroy]
+  # before_action :set_chat, only: %i[show update destroy]
 
   def index
-    @application = Application.find_by(token: params[:token])
-
-    response = @application.chats.map do |chat|
-      { number: chat[:number] }
-    end
-    render json: response
+    chats = Chat.joins(:application).select(:number).where(application: { token: params[:token] }).as_json(except: :id)
+    render json: chats
   end
 
-  def show
-  end
+  def show; end
 
   def create
     @application = Application.find_by(token: params[:token])
 
-    @chat = Chat.new
-    @chat.application_id = @application.id
+    @chat = @application.chats.new
+
     if @chat.save
-      render json: { status: 200, message: 'created chat successfully', data: @chat }
+      render json: { status: 200, message: 'created chat successfully', data: {number: @chat.number} }
     else
       render json: @chat.errors, status: :unprocessable_entity
     end
@@ -33,8 +28,7 @@ class ChatsController < ApplicationController
     end
   end
 
-  def destroy
-  end
+  def destroy; end
 
   private
 
