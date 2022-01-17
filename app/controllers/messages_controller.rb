@@ -11,6 +11,11 @@ class MessagesController < ApplicationController
     render json: @message
   end
 
+  def search
+    response = Message.search(params[:query])
+    render json: response
+  end
+
   def create
     chat = Chat.joins(:application).find_by(application: { token: params[:token] }, number: params[:chat_number].to_i)
     number = chat.messages.maximum('number')
