@@ -2,18 +2,18 @@ class MessagesController < ApplicationController
   before_action :set_message, only: %i[show update destroy]
 
   def index
-    response = Message.joins(chat: :application).select(:number, :content).where(chat: { number: params[:chat_number].to_i },
-                                                                                 application: { token: params[:token] }).as_json(except: :id)
+    if params[:query]
+      chat = Chat.joins(:application).find_by(application: { token: params[:token] }, number: params[:chat_number].to_i)
+      response = Message.search(params[:query], chat.id)
+    else
+      response = Message.joins(chat: :application).select(:number, :content).where(chat: { number: params[:chat_number].to_i },
+                                                                                   application: { token: params[:token] }).as_json(except: :id)
+    end
     render json: response
   end
 
   def show
     render json: @message
-  end
-
-  def search
-    response = Message.search(params[:query])
-    render json: response
   end
 
   def create
