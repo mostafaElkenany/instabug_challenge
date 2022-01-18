@@ -4,24 +4,13 @@ class Message < ApplicationRecord
   include Elasticsearch::Model
   include Elasticsearch::Model::Callbacks
 
-  settings index: { number_of_shards: 1 } do
-    mapping dynamic: false do
-      indexes :content
-      indexes :chat_id, type: :integer
-    end
-  end
-
-  def as_indexed_json(_options = nil)
-    as_json(only: %i[chat_id content])
-  end
-
   def self.search(query, chat_id)
     __elasticsearch__.search({
                                query: {
                                  bool: {
                                    must: [
                                      { match: { "chat_id": chat_id } },
-                                     { query_string: { query: "*#{query}*", fields: ["content"] } }
+                                     { query_string: { query: "*#{query}*", fields: ['content'] } }
                                    ]
                                  }
                                }

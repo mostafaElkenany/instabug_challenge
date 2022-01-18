@@ -2,7 +2,8 @@ class ChatsController < ApplicationController
   # before_action :set_chat, only: %i[show update destroy]
 
   def index
-    chats = Chat.joins(:application).select(:number).where(application: { token: params[:token] }).as_json(except: :id)
+    chats = Chat.joins(:application).select(:number,
+                                            :messages_count).where(application: { token: params[:token] }).as_json(except: :id)
     render json: chats
   end
 
@@ -10,10 +11,10 @@ class ChatsController < ApplicationController
 
   def create
     application = Application.find_by(token: params[:token])
-    number = application.chats.maximum('number')
-    if number.nil?
+    if application.chats.nil?
       number = 1
     else
+      number = application.chats.length
       number += 1
     end
     CreateChatJob.perform_later(application, number)

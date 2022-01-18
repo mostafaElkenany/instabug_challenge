@@ -4,9 +4,15 @@ class MessagesController < ApplicationController
   def index
     if params[:query]
       chat = Chat.joins(:application).find_by(application: { token: params[:token] }, number: params[:chat_number].to_i)
-      response = Message.search(params[:query], chat.id)
+      response = []
+      unless chat.nil?
+        search_result = Message.search(params[:query], chat.id)
+        response = search_result.map do |res|
+          { content: res[:_source][:content], number: res[:_source][:number] }
+        end
+      end
     else
-      response = Message.joins(chat: :application).select(:number, :content).where(chat: { number: params[:chat_number].to_i },
+      response = Message.joins(chat: :application).select(:content, :number).where(chat: { number: params[:chat_number].to_i },
                                                                                    application: { token: params[:token] }).as_json(except: :id)
     end
     render json: response
@@ -18,12 +24,14 @@ class MessagesController < ApplicationController
 
   def create
     chat = Chat.joins(:application).find_by(application: { token: params[:token] }, number: params[:chat_number].to_i)
-    number = chat.messages.maximum('number')
-    if number.nil?
+
+    if chat.messages.nil?
       number = 1
     else
+      number = chat.messages.length
       number += 1
     end
+
     CreateMessageJob.perform_later(chat, message_params, number)
     render json: { status: 200, message: 'created message successfully', data: { number: number } }
   rescue StandardError => e
