@@ -1,0 +1,67 @@
+version: '3.0'
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    ports:
+      - ${DB_PORT}:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+  redis:
+    image: redis
+
+  sidekiq:
+    build: .
+    volumes:
+      - .:/app
+    links:
+      - db
+      - redis
+      - elasticsearch
+    environment:
+      - JOB_WORKER_URL=${JOB_WORKER_URL}
+    command: bundle exec sidekiq
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    environment:
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - ${ES_PORT}:9200
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  app:
+    build: .
+    command: rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      - ".:/app"
+    ports:
+      - ${APP_PORT}:3000
+    depends_on:
+      - db
+      - sidekiq
+      - redis
+      - elasticsearch
+    environment:
+      DB_USER: "${DB_USER}"
+      DB_NAME: "${DB_NAME}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_HOST: "${DB_HOST}"
+      JOB_WORKER_URL: ${JOB_WORKER_URL}
+
+volumes:
+  esdata:
+  mysql_data:
