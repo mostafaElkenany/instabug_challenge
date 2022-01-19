@@ -1,4 +1,4 @@
-version: '2'
+version: '3.0'
 services:
   db:
     image: mysql:5.7
@@ -9,7 +9,7 @@ services:
       MYSQL_USER: "${MYSQL_USER}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
     ports:
-      - "3307:3306"
+      - ${DB_PORT}:3306
     volumes:
       - mysql_data:/var/lib/mysql
   redis:
@@ -39,7 +39,7 @@ services:
         soft: -1
         hard: -1
     ports:
-      - 9200:9200
+      - ${ES_PORT}:9200
     volumes:
       - esdata:/usr/share/elasticsearch/data
 
@@ -49,7 +49,7 @@ services:
     volumes:
       - ".:/app"
     ports:
-      - "3000:3000"
+      - ${APP_PORT}:3000
     depends_on:
       - db
       - sidekiq

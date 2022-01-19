@@ -1,24 +1,49 @@
-# README
+# Instabug Back End Challenge
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+[github.com/mostafaElkenany](https://github.com/mostafaElkenany/instabug_challenge)
 
-Things you may want to cover:
+## Install
 
-* Ruby version
+### Clone the repository
 
-* System dependencies
+```shell
+git clone https://github.com/mostafaElkenany/instabug_challenge.git
+cd instabug_challenge
+```
+### Set environment variables
 
-* Configuration
+1. Create .env file in root directory of the project
+2. Copy variables from .env_example into .env file
+3. Change the values if you want and to avoid conflicts with port numbers
 
-* Database creation
+```shell
+cp .env_example .env
+```
 
-* Database initialization
+### Build the images and start the server
 
-* How to run the test suite
+Using [Docker Compose](https://docs.docker.com/compose/):
 
-* Services (job queues, cache servers, search engines, etc.)
+```shell
+docker-compose up -d
+```
+### Initialize the database
 
-* Deployment instructions
+```shell
+docker-compose run app rails db:create
+docker-compose run app rails db:migrate
+```
+### Health check
 
-* ...
+Verify all containers are up and running
+
+```shell
+docker-compose ps
+```
+### Check server logs
+
+Verify all containers are up and running
+
+```shell
+docker-compose logs -f --tail=100 app
+```
