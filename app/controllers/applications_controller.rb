@@ -8,7 +8,11 @@ class ApplicationsController < ApplicationController
   end
 
   def show
-    render json: { status: 200, message: 'fetched application successfully', data: @application }
+    unless @application.nil?
+      render json: { status: 200, message: 'fetched application successfully', data: @application.as_json(except: :id) }
+    else
+      render json: { status: 404, message: 'application not found' }
+    end
   end
 
   def create
@@ -25,10 +29,12 @@ class ApplicationsController < ApplicationController
   def update
     if @application.update(application_params)
       render json: { status: 200, message: 'application updated successfully',
-                     data: { name: @application.name, token: @application.token } }
+                     data: @application }
     else
       render json: @application.errors, status: :unprocessable_entity
     end
+  rescue StandardError => e
+    render json: { status: 422, message: 'failed to update application', error: e }
   end
 
   def destroy
@@ -40,7 +46,7 @@ class ApplicationsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_application
     @application = Application.select('token', 'name',
-                                      'chats_count').find_by(token: params[:token]).as_json(except: :id)
+                                      'chats_count').find_by(token: params[:token])
   end
 
   # Only allow a list of trusted parameters through.
