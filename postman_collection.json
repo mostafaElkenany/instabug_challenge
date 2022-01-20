@@ -1,0 +1,183 @@
+{
+    "info": {
+        "_postman_id": "ad853f77-29c1-4892-a97e-583209998138",
+        "name": "instabug",
+        "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "get applications",
+            "id": "fed3b080-7334-4849-9f97-13019b44cd0a",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": "localhost:3000/applications"
+            },
+            "response": []
+        },
+        {
+            "name": "create application",
+            "id": "fed1e51a-80b3-4144-9f82-e0c39e1fd057",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "name": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\"name\": \"app name\"}"
+                },
+                "url": "localhost:3000/applications"
+            },
+            "response": []
+        },
+        {
+            "name": "get single application",
+            "id": "82001a07-fefa-4174-8be5-fca57bb6b8f9",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": "localhost:3000/applications/[APP_TOKEN]"
+            },
+            "response": []
+        },
+        {
+            "name": "update application",
+            "id": "6ed4a61b-3ead-470b-b41e-3424947a4cd5",
+            "request": {
+                "method": "PATCH",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "name": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\"name\": \"new name\"}"
+                },
+                "url": "localhost:3000/applications/[APP_TOKEN]"
+            },
+            "response": []
+        },
+        {
+            "name": "get application chats",
+            "id": "93f31eb3-f251-44f5-9c9e-f732e1003e09",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": "localhost:3000/applications/[APP_TOKEN]/chats"
+            },
+            "response": []
+        },
+        {
+            "name": "create chat for application",
+            "id": "b262e923-c626-446b-a878-cb9e6283fe04",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "name": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": ""
+                },
+                "url": "localhost:3000/applications/[APP_TOKEN]/chats"
+            },
+            "response": []
+        },
+        {
+            "name": "create message for chat",
+            "id": "cc1acd25-0eb9-4a27-a4e4-2267f527692d",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "name": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n\t\"content\": \"message content\"\n}"
+                },
+                "url": "localhost:3000/applications/[APP_TOKEN]/chats/[CHAT_NUMBER]/messages"
+            },
+            "response": []
+        },
+        {
+            "name": "get messages of chat",
+            "id": "914fcc0e-565a-4469-b880-8d6a44ab8646",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": "localhost:3000/applications/[APP_TOKEN]/chats/[CHAT_NUMBER]/messages"
+            },
+            "response": []
+        },
+        {
+            "name": "update message",
+            "id": "5a3cb805-cc46-4522-9718-02c3c7a84758",
+            "request": {
+                "method": "PATCH",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "name": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n\t\"content\": \"new content new content new content\"\n}"
+                },
+                "url": "localhost:3000/applications/[APP_TOKEN]/chats/[CHAT_NUMBER]/messages/[MESSAGE_NUMBER]"
+            },
+            "response": []
+        },
+        {
+            "name": "search messages of a chat",
+            "id": "23301f26-15b3-4e63-af5c-bdfdc1c7caf7",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "localhost:3000/applications/[APP_TOKEN]/chats/[CHAT_NUMBER]/messages?query=content",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "3000",
+                    "path": [
+                        "applications",
+                        "[APP_TOKEN]",
+                        "chats",
+                        "[CHAT_NUMBER]",
+                        "messages"
+                    ],
+                    "query": [
+                        {
+                            "key": "query",
+                            "value": "content"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
+}

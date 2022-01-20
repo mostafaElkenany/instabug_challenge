@@ -47,3 +47,17 @@ Verify all containers are up and running
 ```shell
 docker-compose logs -f --tail=100 app
 ```
+#  API Postman collection
+
+Postman Collection demonstrating how to use the [Chat system](https://github.com/mostafaElkenany/instabug_challenge) REST API.
+## Installation
+
+To use the collection, click the following button to import the Chat system API as a collection:
+
+[![Run in Postman](https://s3.amazonaws.com/postman-static/run-button.png)](https://app.getpostman.com/run-collection/f578701e8fe2becb075f)
+
+You can also download the collection file from this repo, then import directly into Postman.
+
+## Usage
+
+The collection is arranged in requests according to the API endpoints.
