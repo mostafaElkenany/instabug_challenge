@@ -54,7 +54,7 @@ Postman Collection demonstrating how to use the [Chat system](https://github.com
 
 To use the collection, click the following button to import the Chat system API as a collection:
 
-[![Run in Postman](https://s3.amazonaws.com/postman-static/run-button.png)](https://app.getpostman.com/run-collection/f578701e8fe2becb075f)
+[![Run in Postman](https://s3.amazonaws.com/postman-static/run-button.png)](https://app.getpostman.com/run-collection/3992c46b84ebf94f0779)
 
 You can also download the collection file from this repo, then import directly into Postman.
 

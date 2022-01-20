@@ -7,8 +7,6 @@ class ChatsController < ApplicationController
     render json: chats
   end
 
-  def show; end
-
   def create
     application = Application.find_by(token: params[:token])
     if application.chats.nil?
@@ -22,16 +20,6 @@ class ChatsController < ApplicationController
   rescue StandardError => e
     render json: { status: 422, message: 'failed to create chat' }
   end
-
-  def update
-    if @chat.update(chat_params)
-      render json: @chat
-    else
-      render json: @chat.errors, status: :unprocessable_entity
-    end
-  end
-
-  def destroy; end
 
   private
 

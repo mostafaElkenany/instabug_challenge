@@ -1,5 +1,5 @@
 class MessagesController < ApplicationController
-  before_action :set_message, only: %i[show update destroy]
+  before_action :set_message, only: %i[show update]
 
   def index
     if params[:query]
@@ -19,7 +19,11 @@ class MessagesController < ApplicationController
   end
 
   def show
-    render json: @message
+    unless @message.nil?
+      render json: { content: @message.content, number: @message.number }
+    else
+      render json: { status: 400, message: 'message not found' }
+    end
   end
 
   def create
@@ -44,10 +48,8 @@ class MessagesController < ApplicationController
     else
       render json: @message.errors, status: :unprocessable_entity
     end
-  end
-
-  def destroy
-    @message.destroy
+  rescue StandardError => e
+    render json: { status: 422, message: 'failed to update message', error: e }
   end
 
   private
