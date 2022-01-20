@@ -30,8 +30,8 @@ docker-compose up -d
 ### Initialize the database
 
 ```shell
-docker-compose run app rails db:create
-docker-compose run app rails db:migrate
+docker-compose run app rake db:create
+docker-compose run app rake db:migrate
 ```
 ### Health check
 
